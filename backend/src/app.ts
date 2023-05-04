@@ -69,8 +69,8 @@ class App {
 
                 // return new user
                 res.status(201).json(user);
-            } catch (err) {
-                console.log(err);
+            } catch (err: any) {
+                this.logger.info(err.message);
             }
         });
 
