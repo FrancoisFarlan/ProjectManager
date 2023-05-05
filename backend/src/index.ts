@@ -42,7 +42,4 @@ server.listen(port);
 //db connexion
 connect();
 
-
-
-
 module.exports = App;
