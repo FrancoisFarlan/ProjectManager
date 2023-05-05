@@ -7,26 +7,25 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export async function register(user: DocumentDefinition<IUser>): Promise<void> {
-   await UserModel.create(user);
+    await UserModel.create(user);
 }
 
 export async function login(user: DocumentDefinition<IUser>) {
-        const foundUser = await UserModel.findOne({ email: user.email });
+    const foundUser = await UserModel.findOne({ email: user.email });
 
-        if (!foundUser) {
-            return new Error('Invalid credentials');
-        }
+    if (!foundUser) {
+        return new Error('Invalid credentials');
+    }
 
-        const isMatch = bcrypt.compareSync(user.password, foundUser.password);
+    const isMatch = bcrypt.compareSync(user.password, foundUser.password);
 
     if (isMatch) {
         const token = jwt.sign({ _id: foundUser._id?.toString(), email: foundUser.email }, process.env.JWT_TOKEN_KEY, {
             expiresIn: '2 days',
         });
 
-        //TODO TESTER
         return { user: { _id: foundUser._id, email: foundUser.email }, token: token };
     } else {
-        return new Error('Password is not correct');
+        return new Error('Invalid credentials');
     }
 }
