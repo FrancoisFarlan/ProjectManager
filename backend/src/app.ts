@@ -1,9 +1,8 @@
 import * as bodyParser from "body-parser";
 import express, {Request, Response} from "express";
 import {BackendLogger} from "./logger/backend.logger";
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
-import {UserModel} from './model/user.model'
+import { userRouter } from '~/router/user.router';
+import {auth} from "~/middleware/auth";
 
 class App {
 
@@ -27,90 +26,11 @@ class App {
     private routes(): void {
 
         //Auth routes
-        this.express.post("/register", async (req: Request, res: Response) => {
-
-            // Our register logic starts here
-            try {
-                // Get user input
-                const { firstName, lastName, email, password } = req.body;
-
-                // Validate user input
-                if (!(email && password && firstName && lastName)) {
-                    res.status(400).send("All input is required");
-                }
-
-                // check if user already exist
-                // Validate if user exist in our database
-                const oldUser = await UserModel.findOne({ email });
-
-                if (oldUser) {
-                    return res.status(409).send("User Already Exist. Please Login");
-                }
-
-                //Encrypt user password
-                const encryptedPassword = await bcrypt.hash(password, 10);
-
-                // Create user in our database
-                const user = await UserModel.create({
-                    firstName,
-                    lastName,
-                    email: email.toLowerCase(), // sanitize: convert email to lowercase
-                    password: encryptedPassword,
-                });
-
-                // Create and save token
-                user.token = jwt.sign(
-                    {user_id: user._id, email},
-                    process.env.JWT_TOKEN_KEY,
-                    {
-                        expiresIn: "2h",
-                    }
-                );
-
-                // return new user
-                res.status(201).json(user);
-            } catch (err: any) {
-                this.logger.info(err.message);
-            }
-        });
-
-        this.express.post("/login", async (req: Request, res: Response) => {
-            // Our login logic starts here
-            try {
-                // Get user input
-                const {email, password} = req.body;
-
-                // Validate user input
-                if (!(email && password)) {
-                    res.status(400).send("All input is required");
-                }
-                // Validate if user exist in our database
-                const user = await UserModel.findOne({email});
-
-                if (user && (await bcrypt.compare(password, user.password))) {
-                    // Create and save user token
-                    user.token = jwt.sign(
-                        {user_id: user._id, email},
-                        process.env.JWT_TOKEN_KEY,
-                        {
-                            expiresIn: "2h",
-                        }
-                    );
-
-                    // user
-                    res.status(200).json(user);
-                } else {
-                    res.status(400).send("Invalid Credentials");
-                }
-
-            } catch (err) {
-                console.log(err);
-            }
-        });
+        this.express.use(userRouter);
 
         // handle undefined routes
-        this.express.use("*", (req: Request, res: Response) => {
-            res.send("This URL is incorrect");
+        this.express.use("/", auth, (req: Request, res: Response) => {
+            res.send("Home");
         });
     }
 }
