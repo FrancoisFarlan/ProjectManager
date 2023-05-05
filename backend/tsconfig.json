@@ -21,7 +21,7 @@
       "~~/*": ["./*"]
     },
     "typeRoots": [
-      "./typings/index.d.ts",
+      "./types",
       "./node_modules/@types/"
     ]
   },

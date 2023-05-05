@@ -3,7 +3,7 @@ import cors from 'cors'
 import App from "./app";
 import { BackendLogger } from "./logger/backend.logger";
 import dotenv from 'dotenv';
-import {connect, disconnect} from './config/db.config';
+import {connect} from './config/db.config';
 
 //dotenv configuration
 dotenv.config();
