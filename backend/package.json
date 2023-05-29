@@ -10,6 +10,7 @@
     "lint": "eslint . --ext .js,.ts",
     "lint-fix": "npm run lint -- --fix"
   },
+  "proxy": "http://localhost:3080",
   "keywords": [],
   "author": "",
   "license": "ISC",

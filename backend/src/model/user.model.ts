@@ -8,7 +8,6 @@ export interface IUser {
     lastName: string;
     email: string;
     password: string;
-    token?: string;
 }
 
 // 2. Create a Schema corresponding to the document interface.
@@ -17,7 +16,6 @@ const userSchema = new Schema<IUser>({
     lastName: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    token: { type:String, required:false}
 });
 
 //Validate unique email

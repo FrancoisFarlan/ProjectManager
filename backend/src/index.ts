@@ -1,5 +1,4 @@
 import * as http from "http";
-import cors from 'cors'
 import App from "./app";
 import { BackendLogger } from "./logger/backend.logger";
 import dotenv from 'dotenv';
@@ -16,11 +15,6 @@ const normalizePort = (val: string | number) => {
 const port = normalizePort(process.env.PORT || 3080);
 
 App.set("port", port);
-
-//cors configuration
-App.use(cors({
-    origin: '*'
-}));
 
 //server configuration
 const server = http.createServer(App);
